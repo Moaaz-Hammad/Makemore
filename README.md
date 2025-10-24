@@ -1,4 +1,3 @@
-```markdown
 # Makemore — Character-level Language Modeling (Two Architectures)
 
 A small educational repository that implements and compares two approaches for character-level sequence modeling:
