@@ -2,7 +2,7 @@
 
 A small educational repository that implements and compares two approaches for character-level sequence modeling:
 
-- A classic feed‑forward Neural Probabilistic Language Model (NPLM) inspired by Bengio et al. (2003).  
+- A classic feed‑forward Neural Probabilistic Language Model (NPLM) inspired by Bengio et al. (2003).
 - A modern Dilated Causal Convolutional model (WaveNet-like) that demonstrates efficient receptive field growth via dilations.
 
 This repo is intended for learning, experimentation, and demonstration rather than production use. The code is straightforward and annotated so you can trace how inputs (names or short sequences) are tokenized, embedded, and used to predict next characters.
@@ -15,7 +15,7 @@ Table of contents
 - Project structure
 - What’s inside (architectures)
   - 1) Bengio-style NPLM (with image)
-  - 2) Dilated Causal Convolutions (with image)
+  - 2) Dilated Causal Convolutions / WaveNet (with image)
 - How to train / sample
 - Dependencies
 - Citations
@@ -64,9 +64,8 @@ Project structure
 - `Makemore using BENGIO, DUCHARME, VINCENT AND JAUVIN.ipynb` — A Jupyter notebook implementing the NPLM (data loading, vocab, PyTorch model, training loop, sampling).
 - `BENGIO, DUCHARME, VINCENT AND JAUVIN.png` — Diagram referencing the original NPLM architecture (included below).
 - `names.txt` — Example dataset (one name per line) used for training and demonstration.
-- `dilated_conv_model.py` — (Example) implementation of a dilated causal convolutional network.
-- `train.py`, `generate.py` — Training and sampling scripts for the dilated conv model (if present).
-- `dilated_causal_convolution.png` — Diagram illustrating dilated causal convolution receptive fields (included below).
+- `WaveNet.png` — Diagram illustrating dilated causal convolution receptive fields (included below).
+- `dilated_conv_model.py`, `train.py`, `generate.py` — Example scripts for the dilated conv model (if present).
 
 If a script is missing, the notebook contains fully working code for the Bengio NPLM and can be adapted to a `.py` script.
 
@@ -86,7 +85,10 @@ Figure: Bengio-style NPLM
 -------------------------
 Below is the NPLM diagram illustrating the embedding lookups, hidden layer (tanh) and the final softmax prediction over the vocabulary.
 
-![Bengio et al. NPLM](./BENGIO,%20DUCHARME,%20VINCENT%20AND%20JAUVIN.png)
+<!-- Use a scaled HTML image so it displays well on GitHub; update the filename exactly if different -->
+<p align="center">
+  <img src="./BENGIO,%20DUCHARME,%20VINCENT%20AND%20JAUVIN.png" alt="Bengio et al. NPLM" width="700">
+</p>
 *Figure: Bengio, Ducharme, Vincent and Jauvin — Neural Probabilistic Language Model (NPLM).*
 
 2) Dilated Causal Convolutions (WaveNet-like)
@@ -102,8 +104,10 @@ Figure: Dilated causal convolution (WaveNet-like)
 -------------------------------------------------
 Below is a diagram showing multiple dilated causal convolution layers and how the receptive field grows with dilation.
 
-![Dilated Causal Convolution (WaveNet-like)](./dilated_causal_convolution.png)
-*Figure: Dilated causal convolutions with increasing dilation factors (1,2,4,8) — causal receptive field illustrated.*
+<p align="center">
+  <img src="./WaveNet.png" alt="WaveNet dilated conv diagram" width="900">
+</p>
+*Figure: Dilated causal convolutions with increasing dilation factors — causal receptive field illustrated.*
 
 How to train & sample (example workflow)
 ----------------------------------------
