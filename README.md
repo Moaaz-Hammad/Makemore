@@ -1,50 +1,134 @@
-## Makemore Project Architectures: A Comparative Overview 💡
+# Makemore — Character-level Language Modeling (Two Architectures)
 
-This text is a description of a project, likely a GitHub repository, structured into two main sections, each detailing a different implementation of a character-level language model for the "Makemore" task.
+A small educational repository that implements and compares two approaches for character-level sequence modeling:
 
----
+- A classic feed‑forward Neural Probabilistic Language Model (NPLM) inspired by Bengio et al. (2003).  
+- A modern Dilated Causal Convolutional model (WaveNet-like) that demonstrates efficient receptive field growth via dilations.
 
-## 1. 🧠 Makemore with Bengio's Neural Probabilistic Language Model (NPLM) 
-
-This section details an implementation of the **character-level language model** using the foundational architecture from the influential paper "**A Neural Probabilistic Language Model**" by Bengio, Ducharme, Vincent, and Jauvin (2003).
-
-### Goal and Context
-The project serves as an **educational exercise** to explore the roots of deep learning for sequence modeling and understand how modern techniques (like **Batch Normalization**) can be applied to classic architectures.
-
-### Model Architecture (NPLM)
-The model follows the core structure of the 2003 paper, predicting the **next character** based on a fixed-size context (an **N-gram window**).
-
-* **Key Components:** An **embedding layer** and a **feed-forward hidden layer**.
-* **Visual Aid:** 
-
-### 🚀 Project Structure
-* `Makemore using BENGIO, DUCHARME, VINCENT AND JAUVIN.ipynb`: The **main Jupyter Notebook** containing all code: data loading, vocabulary construction, the PyTorch NPLM implementation, the training loop, and the final name generation/sampling logic.
-* `BENGIO, DUCHARME, VINCENT AND JAUVIN.png`: A diagram or reference image related to the **NPLM architecture**.
-* `names.txt`: The assumed **dataset of names** used for training the model.
+This repo is intended for learning, experimentation, and demonstration rather than production use. The code is straightforward and annotated so you can trace how inputs (names or short sequences) are tokenized, embedded, and used to predict next characters.
 
 ---
 
-## 2. 🌊 Makemore with Dilated Causal Convolutions (WaveNet-like Architecture) 
+Table of contents
+- About
+- Quick start
+- Project structure
+- What’s inside (architectures)
+  - 1) Bengio-style NPLM
+  - 2) Dilated Causal Convolutions
+- How to train / sample
+- Dependencies
+- Citations
+- Contributing / Contact
+- License
 
-This repository explores an implementation of a **Dilated Causal Convolutional Network**, an advanced architecture famously used in models like Google DeepMind's **WaveNet** for high-fidelity audio generation.
+---
 
-### Goal and Context
-The project aims to illustrate how **dilated convolutions** enable a **wide receptive field** with fewer layers, maintaining **causality** and **efficiency** for sequence prediction.
+About
+-----
+Makemore shows two different ways to solve the same problem — predicting the next character in a sequence — to illustrate the tradeoffs between older feed-forward NPLMs and modern convolutional sequence models that keep causality and expand receptive field efficiently.
 
-### 🏛️ Model Architecture: Dilated Causal Convolutions
-The network is designed for efficient sequence modeling with several key characteristics:
+Quick start
+-----------
+1. Clone the repository:
+   git clone https://github.com/Moaaz-Hammad/Makemore.git
+2. Create and activate a venv (recommended):
+   python -m venv .venv
+   source .venv/bin/activate  # macOS / Linux
+   .venv\Scripts\activate     # Windows
+3. Install dependencies:
+   pip install -r requirements.txt
+   (If a requirements file is not present, install PyTorch and the usual data libs manually:
+   pip install torch numpy tqdm jupyter)
+4. Open the main notebook for the Bengio model:
+   Makemore using BENGIO, DUCHARME, VINCENT AND JAUVIN.ipynb
+   Or run the scripts for the dilated conv model (if provided):
+   python dilated_conv_model.py
+   python train.py
+   python generate.py
 
-| Characteristic | Description |
-| :--- | :--- |
-| **Causality** | Predictions for a given timestep depend **only on past timesteps**, crucial for generation tasks (e.g., generating the next word or audio sample). |
-| **Dilation** | Convolutional filters skip input values with a certain step, allowing the **receptive field** to grow **exponentially with depth** without increased computational cost or loss of resolution. |
-| **Stacked Layers** | Multiple layers with increasing dilation rates ensure the top layer can capture **long-range dependencies** in the sequence. |
+Project structure
+-----------------
+- Makemore using BENGIO, DUCHARME, VINCENT AND JAUVIN.ipynb — A Jupyter notebook implementing the NPLM (data loading, vocab, PyTorch model, training loop, sampling).
+- BENGIO, DUCHARME, VINCENT AND JAUVIN.png — Diagram referencing the original NPLM architecture.
+- names.txt — Example dataset (one name per line) used for training and demonstration.
+- dilated_conv_model.py — (Hypothetical / example) implementation of a dilated causal convolutional network.
+- train.py, generate.py — Training and sampling scripts for the dilated conv model.
+- dilated_causal_convolution.png — Diagram illustrating dilated causal convolution receptive fields.
 
-* **Visual Aid:** 
+If some scripts are not present, the notebook contains fully working code for the Bengio NPLM and can be adapted to a .py script.
 
-### 🚀 Project Structure (Hypothetical)
-* `dilated_conv_model.py`: The core file with the PyTorch/TensorFlow implementation of the **Dilated Causal Convolutional layers** and network architecture.
-* `train.py`: Script for **training** the model.
-* `generate.py`: Script for **sampling** new sequences.
-* `data/`: Directory for storing input **sequence data**.
-* `dilated_causal_convolution.png`: The diagram illustrating the network architecture.
+What’s inside — short descriptions
+----------------------------------
+
+1) Bengio-style Neural Probabilistic Language Model (NPLM)
+- Goal: Predict the next character from a fixed-size context (N-gram window).
+- Core components:
+  - Embedding layer: map discrete characters to dense vectors.
+  - Concatenate embeddings for the context window.
+  - Feed-forward hidden layer(s) -> softmax over vocabulary for next character.
+- Strengths: Simple, interpretable, good for teaching the fundamentals of embedding + feed-forward context modeling.
+- Limitations: Fixed context window (can't easily capture very long-range dependencies).
+
+2) Dilated Causal Convolutions (WaveNet-like)
+- Goal: Model sequences with causal convolutions and exponentially growing receptive fields via dilation.
+- Core ideas:
+  - Causality: outputs depend only on past timesteps (no peeking ahead).
+  - Dilation: expand effective context exponentially with depth while keeping computation per layer small.
+  - Stacked layers with increasing dilation factors (1, 2, 4, 8, ...).
+- Strengths: Capture long-range dependencies with fewer layers; efficient and parallelizable relative to RNNs.
+- Notes: Often combined with residual connections and gated activations (e.g. gated convolution) in production WaveNet implementations.
+
+How to train & sample (example workflow)
+----------------------------------------
+1. Prepare data:
+   - Ensure names.txt (or other sequence data) is cleaned. Each example on its own line.
+   - Build vocabulary from data (typically all characters present plus a special token for padding if needed).
+2. Train:
+   - For the Bengio notebook, run the training cells (the notebook includes a minimal training loop).
+   - For a script-based conv model:
+     python train.py --data data/names.txt --epochs 50 --batch-size 128 --lr 1e-3
+3. Sample:
+   - Use the generate.py script (or sampling cells in the notebook) to sample new sequences from the trained network:
+     python generate.py --model checkpoints/latest.pt --seed "a" --length 20
+4. Tips:
+   - Start small (fewer hidden units / layers) to ensure the pipeline works.
+   - Use learning rate schedules or Adam optimizer.
+   - For notebook experiments, shorten epochs for faster iteration.
+
+Dependencies
+------------
+- Python 3.8+
+- PyTorch (or TensorFlow if you adapt code)
+- numpy, tqdm, jupyter (for running the notebook)
+If a requirements.txt is missing, create one similar to:
+torch
+numpy
+tqdm
+jupyter
+
+Citations
+---------
+If you use this work or derive code from it, please cite:
+- Bengio, Y., Ducharme, R., Vincent, P., & Jauvin, C. (2003). A Neural Probabilistic Language Model.
+- Van den Oord, A., Dieleman, S., Zen, H., et al. (2016). WaveNet: A Generative Model for Raw Audio.
+
+Contributing / Contact
+----------------------
+Contributions, bug reports, and enhancements are welcome. Open an issue or submit a pull request. For questions you can reach out to the repository owner: Moaaz-Hammad (GitHub).
+
+License
+-------
+Specify a license for the repository (e.g., MIT). If you want the project to be open source under MIT, add an `LICENSE` file with the MIT text.
+
+Acknowledgements
+----------------
+This repository is an educational exploration inspired by the original NPLM paper and WaveNet model. Visual diagrams are included for reference.
+
+---
+
+If you'd like, I can:
+- Add a short requirements.txt and a minimal train.py script.
+- Convert the notebook into a runnable script with CLI flags.
+- Add example saved checkpoints and sampling notebooks.
+Tell me which you'd prefer and I’ll prepare the files.
